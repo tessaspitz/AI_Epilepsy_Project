@@ -4,6 +4,12 @@ Mohamad Koubeissi, Tessa Spitz, Aurora Stankow-Mercer
 
 A state will be" (seizure_level, treatment_stage, side_effect_burden, time_in_stage)
 """
+
+'''
+---------------------------------------------------Section 5.1.3 State Space Implementation---------------------------------------------------------------------------------------------------------------
+'''
+
+
 seizure_levels = [0, 1, 2, 3, 4, 5]
 
 seizure_labels = {
@@ -285,3 +291,67 @@ if test_print_4:
     for s in candidate_states:
         print(s, "->", invalid_reason(s))
 ####################################################################################
+
+
+
+'''
+--------------------------------------------------------Section 5.1.2 State Space Description---------------------------------------------------------------------------------------------------
+'''
+
+'''
+(1) Our project models epilepsy treatment plans as a sequential decision problem, where each 
+patients' condition evolves over time bases on treatment decisions and outcomes. 
+
+A state represents the patient's current clinical situation and is defined by our four components:
+seizure level, treatment stage, side effect burden, and time spent in the current treamtent stage. 
+The seizure level captures how frequently the patient experiences seizures, ranging from seizure-free 
+to severe epilepsy. The treatment stage reflects the current level of medical intervention, from low-dose
+monotherapy to surgical evaluation. Side effect burden represents the severity of treatment side effects,
+and time in stage tracks how long the patient has remained in their current treatment plan. 
+
+At each step, a doctor can choose an action, such as continuing the current treatment, increasing
+dosage, switching medications, adding medications, or referring the patient to surgery. These decisions 
+impact how the patient transitions to the next state. 
+
+The system is stochastic, meaning that the outcomes are uncertain: the same treatment deicisons may 
+lead to different sizure outcomes or side effects. The goal is to guide the patient (and doctor) towards 
+favorable states where seizures are minimized (or eliminated entirely) while side effects remain low. 
+'''
+
+'''
+*Note: I'm using this symbol: ε to denote "belongs in" since I don't know how to actually get the real symbol on VS Code. 
+
+(2) A state may b e defined as a tuple: s = (z, t, e,d) where
+    x ε {0, 1, 2, 3, 4, 5}: seizure level
+    t ε T: treatment stage where T = {low_dose_monotherapy, high_dose_monotherapy, dual_therapy, triple_therapy, polypharmacy, surgical_evaluation}
+    e ε {none, mild, moderate, high}: side effect burden
+    d ε {0,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}: time (number of visits) in current stage 
+
+The valid state space S is a subset of X * T * E * D for this problem is restricted by certain constraints:
+    1. Low-dose monotherapy cannot persist with high seizure levels beyind a short duration
+    2. Surgical evaluation is only allowed for sufficiently sever seizure levels
+    3. Advanced therapies reaquire sufficient prior treatment duration
+
+Action Space: 
+    The set of possible actions is A = {continue_current, increase_dose, switch_medication, add_medication, refer_for_surgery}. The availabel actions depend on the current state:
+                        A(s) is a subset of A. 
+    (E.g. if side effects are high, the doctor may not increase the dosage. Or if seizure level is severe, continuing current treatment may not be allowed).
+
+Transition function: 
+    The system changes according to a probabilistic function P(s' | s, a) where 
+        - s is the current state
+        - a ε A(s) is the chosen action
+        - s' is the next state
+    Transitions capture the following:
+        - Changes in seizure level (improved, worsened, the same)
+        - Changes in side effect burden
+        - Movement between treatment stages
+        - Increament of time in stage
+
+Goal States:
+    We will define favorable outcomes (goal states) as:
+        - x = 0 AND
+        - e ε {none, mild}
+    These represent seizure free patients with minimal side effects. 
+
+''' 
