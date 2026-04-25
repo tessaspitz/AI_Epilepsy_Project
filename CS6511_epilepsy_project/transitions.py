@@ -1,3 +1,6 @@
+from state import is_valid_state, time_in_stage
+from actions import allowed_actions
+
 # now we're ready to build transition model:
 def transition_model(state, action):
     assert is_valid_state(state), "Invalid current state."

@@ -1,3 +1,6 @@
+from actions import allowed_actions
+
+
 class MDP:
     def __init__(self, states, transition, reward, gamma=0.95):
         self.states = states
@@ -10,7 +13,7 @@ def compute_q_value(mdp, V, state, action):
     transitions = mdp.transition(state, action)
 
     for prob, next_state in transitions:
-        total = total + prob * (mdp.reward(state, next_state) + mdp.gamma * V[next_state])
+        total = total + prob * (mdp.reward(state, action, next_state) + mdp.gamma * V[next_state])
 
         return total
     
