@@ -52,3 +52,35 @@ def observe(state):
 
     # observation only includes what we assume is imperfectly reported
     return (observed_seizures, observed_side_effect)
+
+# estimate how likely an observation is given the true state which will be useful later for particle filtering/belief updates
+def observation_likelihood(state, observation):
+    seizures, treatment, side_effect, duration = state
+    observed_seizures, observed_side_effect = observation
+
+    probability = 1.0 # start with probability 1 and multiply each observation likelihood in
+    
+    seizure_difference = abs(seizures - observed_seizures) # compare the observed seizure level to the true seizure level
+
+    # exact reports are most likely, nearby reports are still possible
+    if seizure_difference == 0:
+        probability *= 0.7
+    elif seizure_difference == 1:
+        probability *= 0.25
+    else:
+        probability *= 0.05
+
+    # compare the observed side effect level to the true side effect level
+    true_side_effect_num = side_effect_to_num[side_effect]
+    observed_side_effect_num = side_effect_to_num[observed_side_effect]
+
+    # same idea as seizures: exact is most likely, close is somewhat likely
+    side_effect_difference = abs(true_side_effect_num - observed_side_effect_num)
+    if side_effect_difference == 0:
+        probability *= 0.7
+    elif side_effect_difference == 1:
+        probability *= 0.25
+    else:
+        probability *= 0.05
+
+    return probability # return the final likelihood of this observation
