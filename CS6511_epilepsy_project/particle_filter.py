@@ -17,6 +17,30 @@ def initialize_particles(states, num_particles=100):
 
     return particles
 
+# move one particle forward using the transition model, this is the prediction step before using the observation
+def predict_particle(particle, action, mdp):
+    transitions = mdp.transition(particle, action)
+
+    probabilities = [prob for prob, next_state in transitions]
+    next_states = [next_state for prob, next_state in transitions]
+
+    predicted_particle = random.choices(next_states, weights=probabilities, k=1)[0]
+
+    return predicted_particle
+
+
+# move all particles forward after an action is taken, this approximates how the hidden patient state evolves
+def predict_particles(particles, action, mdp):
+    predicted_particles = []
+
+    # predict each particle one at a time
+    for particle in particles:
+        predicted_particle = predict_particle(particle, action, mdp)
+        predicted_particles.append(predicted_particle)
+
+    return predicted_particles
+
+
 # assign a weight to each particle based on the observation particles that better match the observation should matter more
 def weight_particles(particles, observation):
     weighted_particles = []
@@ -44,9 +68,10 @@ def resample_particles(weighted_particles):
     return new_particles
 
 
-# update particles after receiving a new observation, the part that corrects the belief using what we observed
-def update_particles(particles, observation):
-    weighted_particles = weight_particles(particles, observation)
+# update particles after taking an action and receiving a new observation, this includes prediction and correction
+def update_particles(particles, action, observation, mdp):
+    predicted_particles = predict_particles(particles, action, mdp)
+    weighted_particles = weight_particles(predicted_particles, observation)
     new_particles = resample_particles(weighted_particles)
 
     return new_particles
