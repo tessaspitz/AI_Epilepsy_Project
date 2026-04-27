@@ -15,7 +15,7 @@ def compute_q_value(mdp, V, state, action):
     for prob, next_state in transitions:
         total = total + prob * (mdp.reward(state, action, next_state) + mdp.gamma * V[next_state])
 
-        return total
+    return total
     
 
 def get_best_action(mdp, V, state):
@@ -33,4 +33,5 @@ def get_best_action(mdp, V, state):
         if q_value > best_value:
             best_value = q_value
             best_action = action
+
     return best_action

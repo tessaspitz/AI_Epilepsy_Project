@@ -1,7 +1,7 @@
 from state import is_valid_state, time_in_stage
 from actions import allowed_actions
 
-# now we're ready to build transition model:
+# now building transition model
 def transition_model(state, action):
     assert is_valid_state(state), "Invalid current state."
     assert action in allowed_actions(state), "Invalid action for this state."
@@ -75,6 +75,9 @@ def transition_model(state, action):
         if next_state is not None:
             transitions.append((prob, next_state))
 
+    if len(transitions) == 0:
+        return [(1.0, state)]
+
     total_prob = sum(prob for prob, next_state in transitions)
 
     normalized_transitions = []
@@ -134,15 +137,6 @@ def make_next_state(seizures, treatment, side_effect, duration):
         return next_state
 
     return None
-
-
-
-
-
-
-
-
-
 
 
 # Now R(s, a, s'):

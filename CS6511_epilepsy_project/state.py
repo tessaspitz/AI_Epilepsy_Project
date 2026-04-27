@@ -20,7 +20,7 @@ treatment_stages = [
 
 side_effect_burdens = ["none", "mild", "moderate", "high"]
 
-time_in_stage = list(range(25))   # number of visits (every 3 months) in this stage
+time_in_stage = list(range(11))   # number of visits (every 3 months) in this stage
 
 # Generate full raw state space
 state_space = []
@@ -42,7 +42,7 @@ def is_valid_state(state):
 
     # Rule 2:
     # surgical evaluation should only happen for more severe epilepsy
-    if treatment == "surgical_evaluation" and seizures == 0:
+    if treatment == "surgical_evaluation" and seizures < 3:
         return False
 
     # Rule 3:
