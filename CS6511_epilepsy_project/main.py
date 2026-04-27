@@ -4,6 +4,12 @@ from transitions import transition_model, reward_function
 from mdp import MDP
 from value_iteration import value_iteration, extract_policy
 from simulation import run_simulation, print_simulation_results
+from results import (
+    print_top_values,
+    print_bottom_values,
+    print_policy_action_counts,
+    print_simulation_summary
+)
 
 
 def main():
@@ -53,6 +59,10 @@ def main():
 
     print("Done. Total states:", len(V))
 
+    print_top_values(V)
+    print_bottom_values(V)
+    print_policy_action_counts(policy)
+
     print("\nRunning simulation...\n")
 
     start_state = (4, "high_dose_monotherapy", "moderate", 5)
@@ -65,6 +75,7 @@ def main():
     )
 
     print_simulation_results(history, total_reward)
+    print_simulation_summary(history, total_reward)
 
 
 if __name__ == "__main__":
