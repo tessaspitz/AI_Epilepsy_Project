@@ -3,7 +3,8 @@ from actions import allowed_actions
 from transitions import transition_model, reward_function
 from mdp import MDP
 from value_iteration import value_iteration, extract_policy
-from simulation import run_simulation, print_simulation_results
+from policy_iteration import policy_iteration
+from simulation import run_simulation, run_particle_simulation, print_simulation_results
 from results import (
     print_top_values,
     print_bottom_values,
@@ -57,13 +58,13 @@ def main():
     V = value_iteration(mdp)
     policy = extract_policy(mdp, V)
 
-    print("Done. Total states:", len(V))
+    print("Value iteration done. Total states:", len(V))
 
     print_top_values(V)
     print_bottom_values(V)
     print_policy_action_counts(policy)
 
-    print("\nRunning simulation...\n")
+    print("\nRunning regular simulation...\n")
 
     start_state = (4, "high_dose_monotherapy", "moderate", 5)
 
@@ -76,6 +77,29 @@ def main():
 
     print_simulation_results(history, total_reward)
     print_simulation_summary(history, total_reward)
+
+    print("\nRunning particle simulation...\n")
+
+    particle_history = run_particle_simulation(
+        mdp=mdp,
+        policy=policy,
+        start_state=start_state,
+        num_steps=10,
+        num_particles=1000
+    )
+
+    print("particle simulation results")
+    print("---------------------------")
+
+    for item in particle_history:
+        print(item)
+
+    print("\nRunning policy iteration...\n")
+
+    pi_policy, pi_values = policy_iteration(mdp)
+
+    print("Policy iteration done.")
+    print_policy_action_counts(pi_policy)
 
 
 if __name__ == "__main__":
