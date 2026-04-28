@@ -1,6 +1,8 @@
 from actions import allowed_actions
 from mdp import compute_q_value, get_best_action
 
+epsilon = 1e-6
+
 def value_iteration(mdp, iterations=100):
     V = {}
     for state in mdp.states:
@@ -12,7 +14,7 @@ def value_iteration(mdp, iterations=100):
             if len(possible_actions) == 0:
                 new_V[state] = 0.0
                 continue
-            best_value = -99999999
+            best_value = float("-inf")
             for action in possible_actions:
                 q_value = compute_q_value(mdp, V, state, action)
                 if q_value > best_value:

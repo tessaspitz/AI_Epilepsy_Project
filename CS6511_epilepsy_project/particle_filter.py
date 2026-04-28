@@ -1,5 +1,6 @@
 import random
 from observation import observation_likelihood
+from actions import allowed_actions
 
 # particle filter for tracking possible hidden patient states
 # the idea is that we keep a bunch of possible true states then
@@ -19,6 +20,15 @@ def initialize_particles(states, num_particles=100):
 
 # move one particle forward using the transition model, this is the prediction step before using the observation
 def predict_particle(particle, action, mdp):
+
+    valid_actions = allowed_actions(particle)
+
+    if action not in valid_actions:
+        if len(valid_actions) > 0:
+            action = valid_actions[0]
+        else:
+            return particle  # no valid move, stay same
+
     transitions = mdp.transition(particle, action)
 
     probabilities = [prob for prob, next_state in transitions]

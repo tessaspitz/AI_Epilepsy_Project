@@ -1,6 +1,5 @@
 from actions import allowed_actions
 from mdp import compute_q_value, get_best_action
-from state import describe_state
 
 # policy iteration gives another way to solve the MDP
 # instead of directly updating values like value iteration, it improves a policy over time

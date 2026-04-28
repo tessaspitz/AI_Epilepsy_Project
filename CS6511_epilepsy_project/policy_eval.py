@@ -1,11 +1,11 @@
-from mdp import compute_q_value
+from mdp import compute_q_value, mdp
 from actions import allowed_actions
 from state import describe_state
 from value_iteration import value_iteration, extract_policy
 from state import states
 
 
-def policy_evaluation(policy, states, gamma=0.9, theta=1e-4, max_iterations=1000):
+def policy_evaluation(mdp, policy, theta=1e-4, max_iterations=1000):
     U = {}
 
     for state in states:
@@ -21,7 +21,7 @@ def policy_evaluation(policy, states, gamma=0.9, theta=1e-4, max_iterations=1000
             if action is None:
                 continue
 
-            U[state] = compute_q_value(state, action, U, gamma)
+            U[state] = compute_q_value(mdp, U, state, action)
 
             delta = max(delta, abs(old_value - U[state]))
 
@@ -30,7 +30,7 @@ def policy_evaluation(policy, states, gamma=0.9, theta=1e-4, max_iterations=1000
 
     return U
 
-def policy_improvement(policy, U, states, gamma=0.9):
+def policy_improvement(mdp, V, policy):
     policy_stable = True
     new_policy = policy.copy()
 
@@ -45,7 +45,7 @@ def policy_improvement(policy, U, states, gamma=0.9):
         best_value = float("-inf")
 
         for action in actions_for_state:
-            q = compute_q_value(state, action, U, gamma)
+            q = compute_q_value(mdp, U, state, action)
 
             if q > best_value:
                 best_value = q

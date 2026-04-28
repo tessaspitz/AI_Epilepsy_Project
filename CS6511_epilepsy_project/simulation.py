@@ -1,7 +1,7 @@
 import random
 from observation import observe
 from particle_filter import initialize_particles, update_particles, summarize_belief
-
+from actions import allowed_actions
 
 # sample the next state using the mdp transition model
 def sample_next_state(mdp, state, action):
@@ -60,7 +60,20 @@ def run_particle_simulation(mdp, policy, start_state, num_steps=10, num_particle
         belief = summarize_belief(particles) # summarize what the particles currently believe
 
         estimated_state = max(belief, key=belief.get) # use the most likely state as the estimate
-        action = policy[estimated_state] # choose action based on estimated state
+        action = policy.get(estimated_state)
+
+        action = policy.get(estimated_state)
+        valid_actions = allowed_actions(true_state)
+
+        if action not in valid_actions:
+            if len(valid_actions) > 0:
+                action = valid_actions[0]
+            else:
+                action = None
+        if action is None:
+            break
+
+        #action = policy[estimated_state] # choose action based on estimated state
 
         next_true_state = sample_next_state(mdp, true_state, action) # actual hidden patient state moves forward
         observation = observe(next_true_state) # noisy observation of the true next state

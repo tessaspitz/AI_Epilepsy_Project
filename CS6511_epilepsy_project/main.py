@@ -17,54 +17,105 @@ def main():
 
     mdp = MDP(states, transition_model, reward_function)
 
-    print("\n" + "="*77)
-    print("TEST 1: Example state description")
-    print(describe_state((2, "high_dose_monotherapy", "mild", 10)))
-    print("="*77)
+    ###### STATE SPACE TESTS
+    print("\n" + "="*80)
+    print("STATE SPACE TESTS")
+    print("="*80)
 
-    print("\n" + "="*77)
-    print("TEST 2: States by treatment stage")
+    example_state = (2, "high_dose_monotherapy", "mild", 10)
+    print("\nTEST 1: Example state space tests")
+    print(describe_state(example_state))
+    print("Total raw states: ", len(state_space))
+    print("Total valid states:", len(states))
+    print("State ID:", state_to_id[example_state])
+    print("Reverse lookup:", id_to_state[state_to_id[example_state]])
+
+    print("\nStates by Treatment Stage:")
     for t in treatment_stages:
         print(t, ":", len(states_by_treatment[t]))
-    print("="*77)
 
-    print("\n" + "="*77)
-    print("TEST 3: Allowed actions")
+    print("\nStates by Seizure Level:")
+    for s in states_by_seizure_level:
+        print(f"seizure level {s}: {len(states_by_seizure_level[s])}")
+
+    ##### ACTION TESTS
+    print("\n" + "="*80)
+    print("ACTION TESTS")
+    print("="*80)
+
     s = (4, "dual_therapy", "mild", 3)
-    print("State:", s)
-    print("Allowed:", allowed_actions(s))
-    print("="*77)
+    print("\nSingle State:", s)
+    print("Allowed actions:", allowed_actions(s))
 
-    print("\n" + "="*77)
-    print("TEST 4: Invalid reason")
-    s = (2, "low_dose_monotherapy", "mild", 3)
-    print(s, "->", invalid_reason(s))
-    print("="*77)
+    print("\nMultiple State Action Checks:")
+    test_states = [
+        (0, "low_dose_monotherapy", "none", 1),
+        (1, "low_dose_monotherapy", "mild", 2),
+        (2, "high_dose_monotherapy", "moderate", 1),
+        (4, "dual_therapy", "mild", 3),
+        (5, "triple_therapy", "high", 6),
+        (4, "surgical_evaluation", "moderate", 1),
+    ]
 
-    print("\n" + "="*77)
-    print("TEST 5: Transition example")
+    for s in test_states:
+        if is_valid_state(s):
+            print("\nState:", s)
+            print("Allowed actions:", allowed_actions(s))
+        else:
+            print("Invalid state:", s)
+
+    #### INVALID STATES TESTS
+    print("\n" + "="*80)
+    print("INVALID STATE TESTS")
+    print("="*80)
+
+    candidate_states = [
+        (2, "low_dose_monotherapy", "mild", 3),
+        (1, "surgical_evaluation", "none", 0),
+        (4, "triple_therapy", "moderate", 2),
+        (4, "dual_therapy", "mild", 2),
+    ]
+
+    for s in candidate_states:
+        print(s, "->", invalid_reason(s))
+
+    ####### TRANSITION TESTS
+    print("\n" + "="*80)
+    print("TRANSITION TEST")
+    print("="*80)
+
     s = (4, "high_dose_monotherapy", "moderate", 5)
-    print(transition_model(s, "switch_medication"))
-    print("="*77)
+    print("Transitions:", transition_model(s, "switch_medication"))
 
-    print("\n" + "="*77)
-    print("TEST 6: Reward example")
+
+    #######REWARD TESTS
+    print("\n" + "="*80)
+    print("REWARD TEST")
+    print("="*80)
+
     s1 = (4, "high_dose_monotherapy", "moderate", 5)
     s2 = (2, "high_dose_monotherapy", "moderate", 6)
-    print(reward_function(s1, "switch_medication", s2))
-    print("="*77)
+    print("Reward:", reward_function(s1, "switch_medication", s2))
 
-    print("\nRunning value iteration...\n")
+    ##### VALUE ITERATION TESTS
+    print("\n" + "="*80)
+    print("VALUE ITERATION")
+    print("="*80)
+
     V = value_iteration(mdp)
     policy = extract_policy(mdp, V)
 
     print("Value iteration done. Total states:", len(V))
-
     print_top_values(V)
     print_bottom_values(V)
     print_policy_action_counts(policy)
 
-    print("\nRunning regular simulation...\n")
+
+    ##### SIMULATION
+
+    print("\n" + "="*80)
+    print("SIMULATION")
+    print("="*80)
 
     start_state = (4, "high_dose_monotherapy", "moderate", 5)
 
@@ -78,7 +129,11 @@ def main():
     print_simulation_results(history, total_reward)
     print_simulation_summary(history, total_reward)
 
-    print("\nRunning particle simulation...\n")
+
+    ###### PARTICLE FILTER SIM
+    print("\n" + "="*80)
+    print("PARTICLE FILTER SIMULATION")
+    print("="*80)
 
     particle_history = run_particle_simulation(
         mdp=mdp,
@@ -88,18 +143,27 @@ def main():
         num_particles=1000
     )
 
-    print("particle simulation results")
-    print("---------------------------")
-
     for item in particle_history:
         print(item)
 
-    print("\nRunning policy iteration...\n")
+    ###### POLICY ITERATION
+    print("\n" + "="*80)
+    print("POLICY ITERATION")
+    print("="*80)
 
     pi_policy, pi_values = policy_iteration(mdp)
 
     print("Policy iteration done.")
     print_policy_action_counts(pi_policy)
+
+    print("\n" + "="*80)
+    print("POLICY ITERATION CHECK (SINGLE STATE)")
+    print("="*80)
+
+    example_state = (1, "low_dose_monotherapy", "high", 3)
+    print("State:", example_state)
+    print("Best action:", pi_policy.get(example_state))
+    print("Utility:", pi_values.get(example_state))
 
 
 if __name__ == "__main__":

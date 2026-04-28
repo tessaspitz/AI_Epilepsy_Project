@@ -95,22 +95,6 @@ def describe_state(state):
         f"Number of visits in this stage: {duration}"
     )
 
-################################ TEST PRINT ########################################
-
-example_state1 = (1, "high_dose_monotherapy", "mild", 10)
-
-test_print_1 = False
-if test_print_1:
-    print("=" * 77)
-    print(describe_state(example_state1))
-    print("=" * 77)
-    print("Total raw states:", len(state_space))
-    print("Total valid states:", len(states))
-    print("Example state ID:", state_to_id[example_state1])
-    print("Reverse lookup:", id_to_state[state_to_id[example_state1]])
-    print("=" * 77)
-
-####################################################################################
 
 # how the state space is distributed across treatment stages
 states_by_treatment = {}
@@ -121,15 +105,7 @@ for treatment in treatment_stages:
         if state[1] == treatment:
             states_for_each.append(state)
 
-################################ TEST PRINT ########################################
 
-test_print_2a = False
-if test_print_2a:
-    print("\nStates by treatment stage:")
-    for treatment in treatment_stages:
-        print(f"{treatment}: {len(states_by_treatment[treatment])}")
-
-####################################################################################
 
 # define favorable states
 def is_goal_state(state):
@@ -147,14 +123,7 @@ for seizure in seizure_levels:
         if state[0] == seizure:
             states_for_each.append(state)
 
-################################ TEST PRINT ########################################
 
-test_print_2b = False
-if test_print_2b:
-    for i in states_by_seizure_level:
-        print(f"seizure level {i}: {seizure_labels[i]}, number of states {len(states_by_seizure_level[i])}")
-
-####################################################################################
 
 actions = [
     "continue_current",
@@ -239,30 +208,6 @@ def allowed_actions(state):
     ordered_allowed = [action for action in actions if action in allowed]
     return ordered_allowed
 
-################################ TEST PRINT ########################################
-
-test_print_3 = False
-if test_print_3:
-    test_states = [
-        (0, "low_dose_monotherapy", "none", 1),
-        (1, "low_dose_monotherapy", "mild", 2),
-        (2, "high_dose_monotherapy", "moderate", 1),
-        (4, "dual_therapy", "mild", 3),
-        (5, "triple_therapy", "high", 6),
-        (4, "surgical_evaluation", "moderate", 1),
-    ]
-
-    for s in test_states:
-        if is_valid_state(s):
-            print("=" * 77)
-            print(f"State: {s}")
-            print(describe_state(s))
-            print("Allowed actions:", allowed_actions(s))
-        else:
-            print("=" * 77)
-            print(f"Invalid test state: {s}")
-
-####################################################################################
 
 # explain why a state is invalid
 def invalid_reason(state):
@@ -279,21 +224,7 @@ def invalid_reason(state):
 
     return "valid"
 
-################################ TEST PRINT ########################################
 
-test_print_4 = False
-if test_print_4:
-    candidate_states = [
-        (2, "low_dose_monotherapy", "mild", 3),
-        (1, "surgical_evaluation", "none", 0),
-        (4, "triple_therapy", "moderate", 2),
-        (4, "dual_therapy", "mild", 2),
-    ]
-
-    for s in candidate_states:
-        print(s, "->", invalid_reason(s))
-
-####################################################################################
 
 # Below, I'm explicitly handling boundary conditions
 def improve_seizures(seizures):
@@ -431,17 +362,6 @@ def transition_model(state, action):
 
     return normalized_transitions
 
-################################ TEST PRINT ########################################
-
-example_state2 = (4, "high_dose_monotherapy", "moderate", 5)
-
-test_print_5 = False
-if test_print_5:
-    print("=" * 77)
-    print(transition_model(example_state2, "switch_medication"))
-    print("=" * 77)
-
-####################################################################################
 
 # Now R(s, a, s'):
 def reward_function(state, action, next_state):
@@ -491,16 +411,3 @@ def reward_function(state, action, next_state):
         reward -= 25
 
     return reward
-
-################################ TEST PRINT ########################################
-
-example_state3 = (4, "high_dose_monotherapy", "moderate", 5)
-example_state4 = (1, "dual_therapy", "mild", 6)
-
-test_print_6 = False
-if test_print_6:
-    print("=" * 77)
-    print(reward_function(example_state3, "switch_medication", example_state4))
-    print("=" * 77)
-
-####################################################################################
