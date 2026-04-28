@@ -25,7 +25,7 @@ def get_best_action(mdp, V, state):
         return None
     
     best_action = None
-    best_value = -999999
+    best_value = float("-inf")
 
     for action in actions:
         q_value = compute_q_value(mdp, V, state, action)
