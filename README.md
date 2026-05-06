@@ -48,3 +48,10 @@ Overall, this MDP framework allowed me to model outpatient epilepsy management a
 
 ##################### Tessa Spitz ####################
 I helped to model the transition and reward functions as well as the overall MDP functions. A lot of the initial work was done by MZK (as was his idea), and then I helped implement the state and actions spaces that he designed. Then Aurora and I typed up the final report that demonstrates how we did this, what our problem was and how we went about solving it, and also some of our results. Overall, I think the work was distributed evenly.
+
+##################### Aurora Stankow-Mercer ####################
+I mainly worked on the computational side of our epilepsy outpatient management Markov Decision Process (MDP) and helped complete the final report. MZK developed most of the initial clinical framework and problem setup, while Tessa and I helped turn that structure into a working model by implementing the state space, action space, transition behavior, and reward logic in code.
+
+My main contribution was building the full state representation and using value iteration to determine the optimal treatment policy for each patient state. I generated combinations of seizure frequency, treatment stage, side-effect burden, and time in treatment stage so the model could reflect realistic patient scenarios. I also worked on the transition and reward functions to ensure treatment decisions produced clinically reasonable outcomes.
+
+I also helped test the model outputs and worked with Tessa on writing the final report to explain how the MDP was built and how it could help with treatment decisions. I feel the work was shared evenly throughout our team.
